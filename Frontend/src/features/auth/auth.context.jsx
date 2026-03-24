@@ -3,7 +3,6 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
-// Use the URL from Vercel environment variables
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || "https://gen-ai-backend-u7rz.onrender.com",
     withCredentials: true 
@@ -48,12 +47,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        try {
-            await api.get("/api/auth/logout");
-            setUser(null);
-        } catch (err) {
-            console.error("Logout error", err);
-        }
+        await api.get("/api/auth/logout");
+        setUser(null);
     };
 
     return (
@@ -63,4 +58,10 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
+};

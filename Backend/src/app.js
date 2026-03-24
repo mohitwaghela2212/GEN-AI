@@ -7,10 +7,10 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// Update this to be explicit
+// CRITICAL: Use the exact URL of your Vercel frontend
 app.use(cors({
-    origin: "https://gen-ai-orcin.vercel.app", // Your specific Vercel URL
-    credentials: true,                          // Allows cookies to pass
+    origin: "https://gen-ai-orcin.vercel.app", 
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));

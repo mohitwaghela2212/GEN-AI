@@ -5,21 +5,14 @@ const tokenBlacklistModel = require("../models/blacklist.model");
 
 const cookieOptions = {
     httpOnly: true,
-    secure: true,      // Required for HTTPS on Render/Vercel
-    sameSite: 'none',  // Required for cross-domain cookies
-    maxAge: 24 * 60 * 60 * 1000 // 1 day
+    secure: true,      // Required for HTTPS
+    sameSite: 'none',  // Required for cross-site (Vercel to Render)
+    maxAge: 24 * 60 * 60 * 1000 
 };
 
 async function registerUserController(req, res) {
     try {
         const { username, email, password } = req.body;
-        if (!username || !email || !password) {
-            return res.status(400).json({ message: "Please provide username, email and password" });
-        }
-        const isUserAlreadyExists = await userModel.findOne({ $or: [{ username }, { email }] });
-        if (isUserAlreadyExists) {
-            return res.status(400).json({ message: "Account already exists" });
-        }
         const hash = await bcrypt.hash(password, 10);
         const user = await userModel.create({ username, email, password: hash });
         const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -48,14 +41,8 @@ async function loginUserController(req, res) {
 }
 
 async function logoutUserController(req, res) {
-    try {
-        const token = req.cookies.token;
-        if (token) await tokenBlacklistModel.create({ token });
-        res.clearCookie("token", { httpOnly: true, secure: true, sameSite: 'none' });
-        res.status(200).json({ message: "Logged out successfully" });
-    } catch (err) {
-        res.status(500).json({ message: "Logout failed" });
-    }
+    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: 'none' });
+    res.status(200).json({ message: "Logged out" });
 }
 
 async function getMeController(req, res) {
@@ -63,7 +50,7 @@ async function getMeController(req, res) {
         const user = await userModel.findById(req.user.id);
         res.status(200).json({ user: { id: user._id, username: user.username, email: user.email } });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(401).json({ message: "Unauthorized" });
     }
 }
 
