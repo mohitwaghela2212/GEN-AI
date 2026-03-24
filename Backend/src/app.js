@@ -1,20 +1,32 @@
-const express = require("express")
-const cookieParser = require("cookie-parser")
-const cors = require("cors")
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use(cookieParser())
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true
-}))
+}));
 
-const authRouter = require("./routes/auth.routes")
-const interviewRouter = require("./routes/interview.routes")
+// --- ADD THIS SECTION ---
+// Root route to fix the "Cannot GET /" error
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "Interview Master API is running!",
+        status: "Healthy"
+    });
+});
+// ------------------------
 
-app.use("/api/auth", authRouter)
-app.use("/api/interview", interviewRouter)
+// Routes
+const authRouter = require("./routes/auth.routes");
+const interviewRouter = require("./routes/interview.routes");
 
-module.exports = app
+app.use("/api/auth", authRouter);
+app.use("/api/interview", interviewRouter);
+
+module.exports = app;
