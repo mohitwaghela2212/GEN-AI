@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import "../auth.form.scss"
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../auth.context' // Fixed path to your context
 
 const Login = () => {
+    // We use 'login' instead of 'handleLogin' to match your context
     const { loading, login } = useAuth() 
     const navigate = useNavigate()
 
@@ -35,37 +36,25 @@ const Login = () => {
                         <label htmlFor="email">Email</label>
                         <input
                             onChange={(e) => { setEmail(e.target.value) }}
-                            type="email" 
-                            id="email" 
-                            name='email' 
-                            required
-                            placeholder='Enter email address' 
+                            type="email" id="email" name='email' required placeholder='Enter email address' 
                         />
                     </div>
                     <div className="input-group">
                         <label htmlFor="password">Password</label>
-                        <div className="password-wrapper" style={{ position: 'relative' }}>
+                        <div style={{ position: 'relative' }}>
                             <input
                                 onChange={(e) => { setPassword(e.target.value) }}
                                 type={showPassword ? "text" : "password"} 
-                                id="password" 
-                                name='password' 
-                                required
-                                placeholder='Enter password' 
+                                id="password" name='password' required placeholder='Enter password' 
                                 style={{ width: '100%', paddingRight: '40px' }}
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 style={{
-                                    position: 'absolute',
-                                    right: '10px',
-                                    top: '50%',
-                                    transform: 'translateY(-50%)',
-                                    background: 'none',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    fontSize: '1.2rem'
+                                    position: 'absolute', right: '10px', top: '50%',
+                                    transform: 'translateY(-50%)', background: 'none',
+                                    border: 'none', cursor: 'pointer', fontSize: '1.2rem'
                                 }}
                             >
                                 {showPassword ? "🙈" : "👁️"} 
